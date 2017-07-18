@@ -1,0 +1,72 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-textarea-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-flat-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="comment-node">
+
+    <style include="shared-textarea-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <div id="contentDiv">
+                
+                <span>
+                    &#60;&#60;&#60;
+                    <textarea value="{{contentText::input}}" rows="1" cols="60" placeholder="Lines of comments"></textarea>
+                    &#62;&#62;&#62;
+                </span>
+                
+            </div>
+          </div>       
+          
+          <div id="dropZoneAfter"></div>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "comment-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuWholeComponentBehavior,
+          RecursiveStringifyFlatCommonBehavior, AllDeleteCommonBehavior
+        ],
+
+        properties: {
+          contentText: { type: String, reflectToAttribute: true }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfTextAreas = this.querySelectorAll('textarea');
+          for(let textarea of listOfTextAreas){
+            autosizeArea(textarea);
+          }
+        },
+
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<comment-node 
+                                    content-text="${(this.contentText == undefined ? '' : this.contentText)}">
+                                 </comment-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>

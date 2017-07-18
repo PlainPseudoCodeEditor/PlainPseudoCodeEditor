@@ -1,0 +1,38 @@
+<script>
+  LoopsContextMenuSupplBehavior = {
+
+    attached: function() {
+
+      let {remote} = require('electron')
+      let {Menu, MenuItem} = remote;
+
+      let that = this;
+      //Etendre le menu avec des fonctionnalités très spécifiques
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To While',
+        click: function(){
+          that.toWhile();
+        }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To Until',
+        click: function(){
+          that.toUntil();
+        }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To DoWhile',
+        click: function(){
+          that.toDoWhile();
+        }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To DoUntil',
+        click: function(){
+          that.toDoUntil();
+        }
+      }));
+    }
+    
+  }
+</script>

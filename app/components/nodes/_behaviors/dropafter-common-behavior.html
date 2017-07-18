@@ -1,0 +1,23 @@
+<script>
+  DropAfterCommonBehavior = {
+    
+    attached: function(){
+      $(Polymer.dom(this.root).querySelector('#dropZoneAfter')).data('jsObject', this);
+    },
+
+    //DropAfter: ici, on veut placer l'élément drag&dropé juste après cet élément.
+    //On le place donc dans le parent (très probablement un enclosure-el, juste après
+    //la position de l'élément actuel).
+    dropAfterProcedure: function(incomingElement){
+      if( Polymer.dom(Polymer.dom(this).parentNode) ){
+        //Lorsque l'on dropAfter à la fin d'un ensemble, il n'y a pas de nextElementSibling,
+        //il retourne null. Mais le Fire pour les custom elements n'a pas l'air de supporter
+        //le null, alors je le convertie en undefined. La suite est traitée en aval.
+        let beforeThisOne = Polymer.dom(this).nextElementSibling;
+        if( beforeThisOne == null ){ beforeThisOne = undefined; }
+        this.fire('askParentDropAfterThisOne', { incomingElement: incomingElement, beforeThisOne: beforeThisOne });
+      }
+    }
+    
+  }
+</script>

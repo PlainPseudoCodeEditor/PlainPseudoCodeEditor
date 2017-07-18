@@ -1,0 +1,60 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="custom-tabs-pages.html">
+
+<dom-module id="board-el">
+    
+    <template strip-whitespace>
+
+        <paper-tabs selected="{{selected}}">
+            <paper-tab>Main</paper-tab>
+            <paper-tab>Records</paper-tab>
+            <paper-tab>Functions</paper-tab>
+            <paper-tab>Procedures</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selected}}">
+            <div>
+                <custom-tabs-pages selected="0" stringselect="assignment-node, comment-node, vardecl-node, condition-node, read-node, write-node, loop-node, functcall-node, proccall-node"></custom-tabs-pages>
+            </div>
+            <div>
+                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, recdef-node"></custom-tabs-pages>
+            </div>
+            <div>
+                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, functdecl-node"></custom-tabs-pages>
+            </div>
+            <div>
+                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, procdecl-node"></custom-tabs-pages>
+            </div>
+        </iron-pages>
+
+        <!--<div id="rootDiv">
+          
+            <div id="dropZone"></div>
+            <div id="enclosureDiv">
+            <content id="lightdom" select$="[[string-select]]"></content>
+            </div>
+          
+        </div>-->
+
+    </template>
+
+</dom-module>
+
+<!--Pour le Main, string-select="assignment-node, vardecl-node, if-node, read-node, write-node, doloop-node, loop-node, functcall-node, proccall-node"-->
+
+<script>
+    Polymer({
+        is: "board-el",
+
+        properties: {
+            selected: {
+                type: Number,
+                value: 0,
+                notify: true,
+                reflectToAttribute: true
+            }
+        }
+    });
+</script>

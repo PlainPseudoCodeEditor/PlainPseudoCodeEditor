@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+
+        <!-- Insert this line above script imports  -->
+        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+          <!-- normal script imports etc  -->
+          <script src="bower_components/jquery/dist/jquery.js"></script>
+          <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+          <script src="additionalscripts/clipboard.js"></script>   
+
+        <!-- Insert this line after script imports -->
+        <script>if (window.module) module = window.module;</script>
+
+ 
+        <link rel="stylesheet" type="text/css" href="global-style.css">
+        
+        <link rel="import" href="components/editor-el.html">
+    </head>
+    <body>
+      
+      <script>
+        const autosizeInput = require('autosize-input');
+        const autosizeArea = require('autosize');
+      </script>
+
+      <editor-el></editor-el>
+
+      <!--<custom-tabs-pages selected="0" scrollable iseditable>
+      </custom-tabs-pages>-->
+
+      <!--<root-el>
+
+        <if-node condition-expression="TEEEST"><loop-node></loop-node></if-node>
+        <if-node><else-separator></else-separator></if-node>
+        <loop-node></loop-node>
+        <doloop-node></doloop-node>
+        <recdef-node></recdef-node>
+        
+      </root-el>-->
+
+    </body>
+</html>

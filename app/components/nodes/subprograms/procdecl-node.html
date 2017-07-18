@@ -1,0 +1,117 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-input-style.html">
+<link rel='import' href="../../_styles/shared-textarea-style.html">
+<link rel='import' href="../_styles/shared-bracket-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+<link rel='import' href="../_styles/shared-enclosure-el-style.html">
+<link rel='import' href="../_styles/shared-closingline-style.html">
+<link rel='import' href="_styles/shared-subprog-descript-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/enclosure-el-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneinside-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-incl-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="procdecl-node">
+
+    <style include="shared-input-style"></style>
+    <style include="shared-textarea-style"></style>
+    <style include="shared-bracket-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    <style include="shared-enclosure-el-style"></style>
+    <style include="shared-closingline-style"></style>
+    <style include="shared-subprog-descript-style"></style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+
+            <div id="subProgDescription">
+                <div><span>Input parameters: <textarea value="{{inputParameters::input}}" rows="1" cols="50" placeholder="List of the input parameters of the procedure"></textarea></span></div>
+                <!--<input value="{{inputParameters::input}}" placeholder="List of the input parameters of the procedure">-->
+                <div><span>Input-Output parameters: <textarea value="{{inputOutputParameters::input}}" rows="1" cols="43" placeholder="List of the input-output parameters of the procedure"></textarea></span></div>
+                <!--<input value="{{inputOutputParameters::input}}" placeholder="List of the input-output parameters of the procedure">-->
+                <div><span>Output parameters: <textarea value="{{outputParameters::input}}" rows="1" cols="48" placeholder="List of the output parameters of the procedure"></textarea></span></div>
+                <!--<input value="{{outputParameters::input}}" placeholder="List of the output parameters of the procedure">-->
+                <div><span>Header: <textarea value="{{procedHeader::input}}" rows="1" cols="58" placeholder="Header of the procedure"></textarea></span></div>
+                <!--<input value="{{procedHeader::input}}" placeholder="Header of the procedure">-->
+            </div>
+
+            <div id="surroundingDiv">
+              <div id="contentDiv">
+            
+                <span>Procedure <input value="{{procedName::input}}" placeholder="Name of the procedure"></span>
+                
+                <!--////////// Enclosure element ///////////-->
+                <div id="dropZone"></div>
+                <div id="enclosureDiv">
+                    <content id="lightdom" select="assignment-node, comment-node, vardecl-node, condition-node, read-node, write-node, loop-node, functcall-node, proccall-node"></content>
+                </div>
+                <!--////////////////////////////////////////-->
+
+                <div id="closingLine"></div>   
+
+              </div>  
+            </div>
+            
+        </div>
+
+        <div id="dropZoneAfter"></div>
+      </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "procdecl-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, EnclosureElBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuDropZoneInsideBehavior,
+          ContextMenuWholeComponentBehavior,
+          RecursiveStringifyInclCommonBehavior, AllDeleteCommonBehavior
+        ],
+
+        properties: {
+          inputParameters: { type: String, reflectToAttribute: true },
+          inputOutputParameters: { type: String, reflectToAttribute: true },
+          outputParameters: { type: String, reflectToAttribute: true },
+          procedHeader: { type: String, reflectToAttribute: true },
+          procedName: { type: String, reflectToAttribute: true }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
+          let listOfTextAreas = this.querySelectorAll('textarea');
+          for(let textarea of listOfTextAreas){
+            autosizeArea(textarea);
+          }
+        },
+
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<procdecl-node 
+                                    input-parameters="${(this.inputParameters == undefined ? '' : this.inputParameters)}"
+                                    input-output-parameters="${(this.inputOutputParameters == undefined ? '' : this.inputOutputParameters)}"
+                                    output-parameters="${(this.outputParameters == undefined ? '' : this.outputParameters)}"
+                                    proced-header="${(this.procedHeader == undefined ? '' : this.procedHeader)}"
+                                    proced-name="${(this.procedName == undefined ? '' : this.procedName)}">
+                                 </procdecl-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>

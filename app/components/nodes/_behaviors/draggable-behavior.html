@@ -1,0 +1,64 @@
+<script>
+  DraggableBehavior = {
+    
+    handleDown: function(e){
+      e.cancelBubble = true;
+      e.stopPropagation();
+      this.isDragged = true;
+    },
+    
+    handleUp: function(e){
+      e.cancelBubble = true;
+      e.stopPropagation();
+      this.isDragged = false;
+
+      //La cible de l'évènement (e.detail.sourceEvent.target) est un simple noeud
+      //pour pouvoir accéder à l'élément polymer qui se cache derrière, j'ai du 
+      //lier l'instance polymer avec le noeud via la méthode jQuery data sous 
+      //le nom jsObject. le "$" sert à tranformer le noeud en object jQuery.
+      let targetInstance = $(e.detail.sourceEvent.target).data('jsObject');
+      
+      //Si le noeud cible n'est pas une dropZone alors undefined sera retourné.
+      //Dans ce cas le drag-drop ne se fera pas. Seules les dropZones ont subits
+      //le traitement nécessaire (.data('jsObject', this)) pour que .data('jsObject')
+      //fonctionne.
+      if(targetInstance != undefined){
+        
+        //Lors du drag-drop un élément ne peut pas être droppé dans ses propres 
+        //enfants, ca serait comme se téléporter soi et son contenu à l'intérieur 
+        //de soi même. C'est bien parce que les enfants du noeuds drag-dropé le
+        //suivent qu'il y a un problème ici.
+        if(this.contains(e.detail.sourceEvent.target)){
+          console.log("Je ne peux pas drag&dropper dans mes enfants");
+        }
+        else{
+
+          //Pas très beau
+          //Ici, on détecte si on cible une dropZoneInside ou une dropZoneAfter
+          //et on appel la méthode qui correspond.
+          console.log(e.detail.sourceEvent.target.id);
+          if( e.detail.sourceEvent.target.id == "dropZoneAfter" ){
+            targetInstance.dropAfterProcedure(this);
+          }
+          else {
+            targetInstance.dropInsideProcedure(this);
+          }
+          console.log("drag&drop réussi");
+          
+        }
+      }
+    },
+    
+    handleTrack: function(e){
+    },
+    
+    properties: {
+      'isDragged': { type: Boolean, value: false }
+    },
+    
+    computeClass: function(f) {
+      return f ? "dragged" : "notDragged";
+    }
+    
+  }
+</script>

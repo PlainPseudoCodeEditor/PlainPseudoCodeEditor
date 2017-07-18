@@ -1,0 +1,33 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../_styles/shared-image-style.html">
+
+<link rel='import' href="../_behaviors/dropper-drag-behavior.html">
+
+
+<dom-module id="incl-dountil-dropper">
+
+    <style include="shared-image-style"></style>
+
+    <template strip-whitespace>
+        <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <img class="dropIcon" src="../../../images/nodescatalog/InclDoUntil_1.3.svg"/>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "incl-dountil-dropper",
+        behaviors: [DropperDragBehavior],
+
+        properties: {
+        },
+
+        generateElement: function(){
+            let newInclDoUntil = $('<loop-node identity="dountil"></loop-node>').get( 0 );
+            return newInclDoUntil;
+        }
+    });
+</script>

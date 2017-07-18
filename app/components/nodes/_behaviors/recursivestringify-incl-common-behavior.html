@@ -1,0 +1,16 @@
+<script>
+  RecursiveStringifyInclCommonBehavior = {
+    
+    //Le recursiveStringify traduit l'élément, ses attributs ET SES ENFANTS en XML.
+    recursiveStringify: function(){
+        let recursiveStringify = this.simpleStringify();
+        for( let child of Polymer.dom(this).children ){
+          let n = recursiveStringify.lastIndexOf("</");
+          let recursiveStringifyTemp = recursiveStringify.substring(0,n)+  child.recursiveStringify()  +recursiveStringify.substring(n);
+          recursiveStringify = recursiveStringifyTemp;
+        }
+        return recursiveStringify;
+    }
+    
+  }
+</script>

@@ -1,0 +1,84 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-input-style.html">
+<link rel='import' href="../_styles/shared-bracket-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+<link rel='import' href="../_styles/shared-enclosure-el-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/enclosure-el-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneinside-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-incl-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="recdef-node">
+   
+    <style include="shared-input-style"></style>
+    <style include="shared-bracket-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    <style include="shared-enclosure-el-style"></style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <div id="contentDiv">
+                
+                <span>Type <input value="{{recordName::input}}" placeholder="Record name"> : record</span>
+
+                <!--////////// Enclosure element ///////////-->
+                <div id="dropZone"></div>
+                <div id="enclosureDiv">
+                  <content id="lightdom" select="comment-node, vardecl-node"></content>
+                </div>
+                <!--////////////////////////////////////////-->
+                
+                <span>end</span>
+
+            </div>
+          </div>
+          
+          <div id="dropZoneAfter"></div>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "recdef-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, EnclosureElBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuDropZoneInsideBehavior,
+          ContextMenuWholeComponentBehavior,
+          RecursiveStringifyInclCommonBehavior, AllDeleteCommonBehavior
+        ],
+
+        properties: {
+          recordName: { type: String, reflectToAttribute: true }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
+        },
+
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<recdef-node 
+                                    record-name="${(this.recordName == undefined ? '' : this.recordName)}">
+                                 </recdef-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>

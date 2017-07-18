@@ -1,0 +1,26 @@
+<script>
+  ConditionsContextMenuSupplBehavior = {
+
+    attached: function() {
+
+      let {remote} = require('electron')
+      let {Menu, MenuItem} = remote;
+
+      let that = this;
+      //Etendre le menu avec des fonctionnalités très spécifiques
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To If',
+        click: function(){
+          that.toIf();
+        }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+        label: 'To IfElse',
+        click: function(){
+          that.toIfElse();
+        }
+      }));
+    }
+    
+  }
+</script>

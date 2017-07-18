@@ -1,0 +1,40 @@
+<script>
+  AllDeleteCommonBehavior = {
+
+    delete: function(){
+      let parent = Polymer.dom(this).parentNode;
+      
+      //Quand on va supprimer le noeud, on doit prendre les enfants du noeud est les donner au parent du noeud
+      //pour éviter qu'il soit supprimer avec le noeud.
+      //Il nous faut ainsi insérer les enfants du noeud dans le parent à l'emplacement du noeud qui va disparaitre.
+      //Nous utilisons donc insertBefore(beforeThisOne) et nous devons déterminer le beforeThisOne.
+      //Si il n'y a pas de nextElementSibling, il retourne null. Mais il est possible que ça pose problème avec "null", 
+      //alors je le convertie en undefined.
+      let beforeThisOne = Polymer.dom(this).nextElementSibling;
+      if( beforeThisOne == null ){ beforeThisOne = undefined; }
+
+      if( beforeThisOne != undefined ) {
+        for( let child of Polymer.dom(this).children ) {
+          Polymer.dom(parent).insertBefore(child, beforeThisOne);
+        }
+      }
+      else {
+        for( let child of Polymer.dom(this).children ) {
+          Polymer.dom(parent).appendChild(child);
+        }
+      }
+
+      Polymer.dom(parent).removeChild(this);
+
+      Polymer.dom.flush();
+    },
+
+    recursiveDelete: function(){
+      let parent = Polymer.dom(this).parentNode;
+      Polymer.dom(parent).removeChild(this);
+      
+      Polymer.dom.flush();
+    }
+    
+  }
+</script>

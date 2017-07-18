@@ -1,0 +1,185 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="commons/flat-assign-dropper.html">
+<link rel="import" href="commons/flat-comment-dropper.html">
+<link rel="import" href="commons/flat-vardecl-dropper.html">
+
+<link rel="import" href="conditions/incl-if-dropper.html">
+<link rel="import" href="conditions/incl-ifelse-dropper.html">
+
+<link rel="import" href="definitions/flat-recdescript-dropper.html">
+<link rel="import" href="definitions/incl-record-dropper.html">
+
+<link rel="import" href="io/flat-read-dropper.html">
+<link rel="import" href="io/flat-write-dropper.html">
+
+<link rel="import" href="loops/incl-dountil-dropper.html">
+<link rel="import" href="loops/incl-dowhile-dropper.html">
+<link rel="import" href="loops/incl-until-dropper.html">
+<link rel="import" href="loops/incl-while-dropper.html">
+
+<link rel="import" href="subprograms/flat-funct-dropper.html">
+<link rel="import" href="subprograms/flat-proced-dropper.html">
+<link rel="import" href="subprograms/incl-funct-dropper.html">
+<link rel="import" href="subprograms/incl-proced-dropper.html">
+
+<dom-module id="catalogbar-el">
+    
+    <template strip-whitespace>
+
+        <style>
+            /*:host {
+                border-right-style: double;
+                border-right-width: 2px;
+                padding-right: 10px;
+            }*/
+            iron-pages {
+                width: 100%;
+                padding-left: 10px;
+            }
+            #top {
+                height: 100px;
+            }
+            div.grid {
+                display: flex;
+            }            
+        </style>
+
+        <iron-pages selected="{{selected}}">
+            <div>
+                <div id="top"></div>
+                <div class="grid">
+                    <div><flat-comment-dropper></flat-comment-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-vardecl-dropper></flat-vardecl-dropper></div>
+                    <div><flat-assign-dropper></flat-assign-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-read-dropper></flat-read-dropper></div>
+                    <div><flat-write-dropper></flat-write-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-if-dropper></incl-if-dropper></div>
+                    <div><incl-ifelse-dropper></incl-ifelse-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-while-dropper></incl-while-dropper></div>
+                    <div><incl-until-dropper></incl-until-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-dowhile-dropper></incl-dowhile-dropper></div>
+                    <div><incl-dountil-dropper></incl-dountil-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-funct-dropper></flat-funct-dropper></div>
+                    <div><flat-proced-dropper></flat-proced-dropper></div>
+                </div>
+            </div>
+            <div>
+                <div id="top"></div>
+                <div class="grid">
+                    <div><incl-record-dropper></incl-record-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-comment-dropper></flat-comment-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-recdescript-dropper></flat-recdescript-dropper></div>
+                    <div></div>
+                </div>
+            </div>
+            <div>
+                <div id="top"></div>
+                <div class="grid">
+                    <div><incl-funct-dropper></incl-funct-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-comment-dropper></flat-comment-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-vardecl-dropper></flat-vardecl-dropper></div>
+                    <div><flat-assign-dropper></flat-assign-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-read-dropper></flat-read-dropper></div>
+                    <div><flat-write-dropper></flat-write-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-if-dropper></incl-if-dropper></div>
+                    <div><incl-ifelse-dropper></incl-ifelse-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-while-dropper></incl-while-dropper></div>
+                    <div><incl-until-dropper></incl-until-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-dowhile-dropper></incl-dowhile-dropper></div>
+                    <div><incl-dountil-dropper></incl-dountil-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-funct-dropper></flat-funct-dropper></div>
+                    <div><flat-proced-dropper></flat-proced-dropper></div>
+                </div>
+            </div>
+            <div>
+                <div id="top"></div>
+                <div class="grid">
+                    <div><incl-proced-dropper></incl-proced-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-comment-dropper></flat-comment-dropper></div>
+                    <div></div>
+                </div>
+                <div class="grid">
+                    <div><flat-vardecl-dropper></flat-vardecl-dropper></div>
+                    <div><flat-assign-dropper></flat-assign-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-read-dropper></flat-read-dropper></div>
+                    <div><flat-write-dropper></flat-write-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-if-dropper></incl-if-dropper></div>
+                    <div><incl-ifelse-dropper></incl-ifelse-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-while-dropper></incl-while-dropper></div>
+                    <div><incl-until-dropper></incl-until-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><incl-dowhile-dropper></incl-dowhile-dropper></div>
+                    <div><incl-dountil-dropper></incl-dountil-dropper></div>
+                </div>
+                <div class="grid">
+                    <div><flat-funct-dropper></flat-funct-dropper></div>
+                    <div><flat-proced-dropper></flat-proced-dropper></div>
+                </div>
+            </div>
+        </iron-pages>
+
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "catalogbar-el",
+
+        properties: {
+            selected: {
+                type: Number,
+                value: 0,
+                notify: true,
+                reflectToAttribute: true
+            }
+        }
+    });
+</script>

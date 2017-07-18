@@ -1,0 +1,63 @@
+<script>
+  ContextMenuWholeComponentBehavior = {
+
+    properties: {
+      menuOfTheComponent: { type: Object }
+    },
+
+    attached: function() {
+
+      let {remote} = require('electron')
+      let {Menu, MenuItem} = remote;
+
+      this.menuOfTheComponent = new Menu();
+
+      let that = this;
+
+      this.menuOfTheComponent.append(new MenuItem({
+          label: 'Copy',
+          click: function(){
+            let clip = Clipboard.getInstance();
+
+            //On appelle le code de clonage de l'élément
+            let simpleCloneText = that.simpleStringify();
+
+            clip.setContent(simpleCloneText);
+            //Peut-être mettre un signal visuel indiquant la réussiste du "Copier".
+          }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+          label: 'Recursive Copy',
+          click: function(){
+            let clip = Clipboard.getInstance();
+
+            //On appelle le code de clonage de l'élément
+            let recursiveCloneText = that.recursiveStringify();
+
+            clip.setContent(recursiveCloneText);
+            //Peut-être mettre un signal visuel indiquant la réussiste du "Copier".
+          }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+          label: 'Delete',
+          click: function(){
+            that.fire('askDeleteThisNode', { thisOne: that });
+          }
+      }));
+      this.menuOfTheComponent.append(new MenuItem({
+          label: 'Recursive Delete',
+          click: function(){
+            that.fire('askDeleteRecursiveThisNode', { thisOne: that });
+          }
+      }));
+    
+      (this.$.topMostDiv).addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        that.menuOfTheComponent.popup(remote.getCurrentWindow());
+      }, false);
+    }
+    
+  }
+</script>

@@ -1,0 +1,67 @@
+<script>
+  EnclosureElBehavior = {
+
+    attached: function(){
+      $(Polymer.dom(this.root).querySelector('#dropZone')).data('jsObject', this);
+      this.addEventListener('askParentDropAfterThisOne', this.dropInsideButAfterThisOne);
+    },
+
+    //DropInside: ici, on veut placer l'élément drag&dropé en première position à l'intérieur
+    //du enclosure-el. Si on ne veut pas le placer en première position, on retombe alors
+    //dans le cas d'un drag&drop after et il faut donc ce référer au dropAfterProcedure d'un if-node,
+    //loop-node, ...
+    dropInsideProcedure: function(incomingElement){
+      if( (this.$.lightdom.getAttribute("select")).includes(incomingElement.is) ){
+        //Dans un dropInside, quand on drag&drop un élément sur la même position. Càd si, on prend
+        //le premier élément de n'importe quel parent et qu'on le drop inside du même parent.
+        //Il ne devrait pas bouger puisque c'est la position qu'il occupe déjà. Cependant, il se
+        //produit le problème que firstElementChild et le même que incomingElement, on demande donc
+        //à l'élément de s'insérer au dessus de lui même, ce qui est impossible. C'est pour ca qu'il 
+        //y a cette condition pour éviter ce problème. (Si ca arrive ne rien faire).
+        if( incomingElement != Polymer.dom(this).firstElementChild ){
+          Polymer.dom(this).insertBefore(incomingElement, Polymer.dom(this).firstElementChild);
+          Polymer.dom.flush();
+        }
+      }
+    },
+
+    dropInsideButAfterThisOne: function(event){
+
+      //Cette condition est nécessaire parce que l'élément qui émet l'évènement est aussi
+      //le premier à le catcher et ce n'est pas notre objectif. Nous voulons que ce soit
+      //le parent qui catch l'évènement, donc nous n'exécutons pas le code quand event.target
+      //est égale à This.
+      //Pourquoi event.target est égale à l'élément qui a lancé l'évènement ?
+      //C'est parcequ'ici on a affaire à un évènement custom lancé avec la méthode fire.
+      //Il n'a pas vraiment de cible, alors il se cible lui même et fait un bubble up.
+      //Nous on veux que le bubble up se fasse, donc on l'empèche de s'autocapturer.
+      if(event.target != this){
+        event.cancelBubble = true;
+        event.stopPropagation();
+
+        //Cette condition parmet de savoir pour le drag&drop si l'élément a le droit d'être mis 
+        //dans le content de ce parent. Pour cela, il doit faire partie de la liste select.
+        if( (this.$.lightdom.getAttribute("select")).includes(event.detail.incomingElement.is) ){
+          
+          //Quand on drag&drop un élément tout à la fin d'un ensemble, le beforeThisOne est null
+          //alors on doit faire un append à la place.
+          if( event.detail.beforeThisOne != undefined ) {
+            //Quand on drop l'élément sur le dropAfter de l'élément juste au dessus de lui, comme
+            //si on le droppait au même endroit en fait. Ca provoque un problème car le beforeThisOne
+            //est égal à l'incomingElement. C'est comme si on lui demandait de se mettre devant lui même.
+            //Alors quand c'est le cas autant ne rien faire.
+            if( event.detail.incomingElement != event.detail.beforeThisOne)
+            {
+              Polymer.dom(this).insertBefore(event.detail.incomingElement, event.detail.beforeThisOne);
+            }
+          }
+          else { //voir le if qui y correspond.
+            Polymer.dom(this).appendChild(event.detail.incomingElement);
+          }
+          Polymer.dom.flush();
+        }
+      }
+    }
+
+  }
+</script>

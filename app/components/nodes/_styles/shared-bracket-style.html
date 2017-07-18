@@ -1,0 +1,26 @@
+<dom-module id="shared-bracket-style">
+  <template>
+    
+    <style>
+      #surroundingDiv {
+        position: relative;
+      }
+      
+      #surroundingDiv::before {
+        content: " ";
+        position: absolute;
+        border-left: 3px solid #666;
+        border-top: 3px solid #666;
+        border-bottom: 3px solid #666;
+        padding: 5px;
+        top: 8px;
+        bottom: 7px;
+      }
+
+      #contentDiv {   
+        margin-left: 20px;
+      }
+    </style>
+    
+  </template>
+</dom-module>

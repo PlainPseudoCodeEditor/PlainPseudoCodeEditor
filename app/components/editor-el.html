@@ -1,0 +1,152 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<!--L'icone image:view-compact se trouve dans la bibliothèque d'icone "image", je dois l'importer en supplément-->
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-layout.html">
+<link rel="import" href="nodes/nodesloader.html">
+<link rel="import" href="catalogbar/catalogbar-el.html">
+<link rel="import" href="board/board-el.html">
+
+<dom-module id="editor-el">
+    
+  <template strip-whitespace>
+
+      <style>
+        app-header {
+          background-color: #4285f4; color: #fff;
+        }
+        app-header paper-icon-button { --paper-icon-button-ink-color: #fff; }
+        
+        app-drawer-layout {
+          --app-drawer-layout-content-transition: margin 0.2s;
+          --app-drawer-width: 170px;
+        }
+        app-drawer {
+          --app-drawer-content-container: {
+            background-color: #eee;
+          }
+          --app-drawer-width: 170px;
+        }
+
+        .drawer-content {
+          margin-top: 100px; height: calc(100% - 80px);
+          overflow: auto;
+        }
+        #sidebar {
+          display:flex;
+        }
+        #catbarDiv {
+          display: inline-flex;
+        }
+        #sidemarkDiv {
+          flex: 1;
+        }
+
+        #boardDiv {
+          background-color: #ffffff;
+          padding: 8px;
+        }
+      </style>
+
+
+      <app-header-layout>
+
+        <app-header fixed effects="waterfall" slot="header">
+          <app-toolbar>
+            
+            <div main-title>Inbox</div>
+          </app-toolbar>
+        </app-header>
+
+        <app-drawer-layout id="drawerLayout">
+
+          <app-drawer slot="drawer">
+            <div class="drawer-content">
+              <div id="sidebar">
+                <div id="catbarDiv"><catalogbar-el selected="{{selected}}"></catalogbar-el></div>
+                <div id="sidemarkDiv"><paper-icon-button id="toggle" icon="image:view-compact"></paper-icon-button></div>
+              </div>
+            </div>
+          </app-drawer>
+            
+          <div id="boardDiv"><board-el selected="{{selected}}"></board-el></div>
+
+        </app-drawer-layout>
+
+      </app-header-layout>
+
+      <paper-dialog id="deleteDialog" modal>
+        <h2>Attention !</h2>
+        <p>Vous êtes sur le point de supprimer un élément, confirmez-vous ?</p>
+        <div class="buttons">
+          <paper-button dialog-dismiss autofocus>Annuler</paper-button>
+          <paper-button id="deleteBtnConfirm" dialog-confirm>Valider</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="recursiveDeleteDialog" modal>
+        <h2>Attention !</h2>
+        <p>Vous êtes sur le point de supprimer RECURSIVEMENT des éléments, confirmez-vous ?</p>
+        <div class="buttons">
+          <paper-button dialog-dismiss autofocus>Annuler</paper-button>
+          <paper-button id="recursiveDeleteBtnConfirm" dialog-confirm>Valider</paper-button>
+        </div>
+      </paper-dialog>
+
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "editor-el",
+
+        properties: {
+          selected: {
+            type: Number,
+            value: 0,
+            notify: true,
+            reflectToAttribute: true
+          }
+        },
+
+        listeners: {
+          'deleteBtnConfirm.tap': '_confirmDeleteANode',
+          'recursiveDeleteBtnConfirm.tap': '_confirmRecursiveDeleteANode'
+        },
+
+        attached: function(){
+          let drawerLayout = document.getElementById('drawerLayout');
+          toggle.addEventListener('click', function() {
+            if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+              drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+            } else {
+              drawerLayout.drawer.toggle();
+            }
+          });
+          this.addEventListener('askDeleteThisNode', this._askDeleteANode);
+          this.addEventListener('askDeleteRecursiveThisNode', this._askRecursiveDeleteANode);
+        },
+
+
+        _askDeleteANode: function(event){
+          $(this.$.deleteBtnConfirm).data('targetNodeToDelete', event.detail.thisOne);
+          (this.$.deleteDialog).open();
+        },
+        _askRecursiveDeleteANode: function(event){
+          $(this.$.recursiveDeleteBtnConfirm).data('targetNodeToRecursiveDelete', event.detail.thisOne);
+          (this.$.recursiveDeleteDialog).open();
+        },
+
+        _confirmDeleteANode: function(event){
+          let nodeToDelete = $(event.srcElement).data('targetNodeToDelete');
+          nodeToDelete.delete();
+        },
+        _confirmRecursiveDeleteANode: function(event){
+          let nodeToRecursiveDelete = $(event.srcElement).data('targetNodeToRecursiveDelete');
+          nodeToRecursiveDelete.recursiveDelete();
+        },
+    });
+</script>

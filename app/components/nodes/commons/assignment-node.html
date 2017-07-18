@@ -1,0 +1,70 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-input-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-flat-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="assignment-node">
+
+    <style include="shared-input-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <div id="contentDiv">
+                
+                <span><input value="{{variableName::input}}" placeholder="Variable name"> &#60;&#45;&#45; <input value="{{expression::input}}" placeholder="Expression or value"></span>
+                
+            </div>
+          </div>
+
+          <div id="dropZoneAfter"></div>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "assignment-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuWholeComponentBehavior,
+          RecursiveStringifyFlatCommonBehavior, AllDeleteCommonBehavior
+        ],
+
+        properties: {
+          variableName: { type: String, reflectToAttribute: true },
+          expression: { type: String, reflectToAttribute: true }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
+        },
+
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<assignment-node 
+                                    variable-name="${(this.variableName == undefined ? '' : this.variableName)}" 
+                                    expression="${(this.expression == undefined ? '' : this.expression)}">
+                                 </assignment-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>

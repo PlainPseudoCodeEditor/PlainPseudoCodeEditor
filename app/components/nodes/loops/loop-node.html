@@ -1,0 +1,146 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-input-style.html">
+<link rel='import' href="../_styles/shared-bracket-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+<link rel='import' href="../_styles/shared-enclosure-el-style.html">
+<link rel='import' href="../_styles/shared-closingline-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/enclosure-el-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneinside-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="_behaviors/loops-context-menu-suppl-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-incl-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="loop-node">
+
+    <style include="shared-input-style"></style>
+    <style include="shared-bracket-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    <style include="shared-enclosure-el-style"></style>
+    <style include="shared-closingline-style"></style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <div id="contentDiv">
+
+                <template is="dom-if" if="[[isDoLoop(identity)]]">
+                    <span>Do</span>
+                </template>
+                <template is="dom-if" if="[[!isDoLoop(identity)]]">
+                    <span>
+                        <template is="dom-if" if="[[isWhile(identity)]]">While (</template>
+                        <template is="dom-if" if="[[!isWhile(identity)]]">Until (</template>
+                    </span>
+                    <input value="{{conditionExpression::input}}" placeholder="Conditionnal expression">
+                    <span> )</span>
+                </template>
+
+                <!--////////// Enclosure element ///////////-->
+                <div id="dropZone"></div>
+                <div id="enclosureDiv">
+                  <content id="lightdom" select="assignment-node, comment-node, vardecl-node, condition-node, read-node, write-node, loop-node, functcall-node, proccall-node"></content>
+                </div>
+                <!--////////////////////////////////////////-->
+                
+                <template is="dom-if" if="[[isDoLoop(identity)]]">
+                    <span>
+                        <template is="dom-if" if="[[isWhile(identity)]]">While (</template>
+                        <template is="dom-if" if="[[!isWhile(identity)]]">Until (</template>
+                    </span>
+                    <input value="{{conditionExpression::input}}" placeholder="Conditionnal expression">
+                    <span> )</span>
+                </template>
+                <template is="dom-if" if="[[!isDoLoop(identity)]]">
+                    <div id="closingLine"></div>
+                </template>
+                            
+            </div>  
+          </div>
+          
+          <div id="dropZoneAfter"></div>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "loop-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, EnclosureElBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuDropZoneInsideBehavior, 
+          ContextMenuWholeComponentBehavior,
+          RecursiveStringifyInclCommonBehavior, 
+          AllDeleteCommonBehavior, LoopsContextMenuSupplBehavior
+        ],
+
+        properties: {
+          conditionExpression: { type: String, reflectToAttribute: true },
+          identity: { type: String, reflectToAttribute: true },
+          test1: { type: Boolean, value: true },
+          test2: { type: Boolean, value: true },
+          menuOfTheComponent: { type: Object }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
+        },
+
+        isDoLoop: function(identity){ 
+          switch(identity){
+            case "dowhile": 
+              return true;
+            case "dountil":
+              return true;
+            case "while":
+              return false;
+            case "until":
+              return false;
+            default:
+              //aucune des valeurs précédement citées, alors lever une exception
+          }
+        },
+        isWhile: function(identity){ 
+          switch(identity){
+            case "dowhile":
+              return true;
+            case "dountil":
+              return false;
+            case "while":
+              return true;
+            case "until":
+              return false;
+            default:
+              //aucune des valeurs précédement citées, alors lever une exception
+          }
+        },
+
+        toWhile: function(){ this.identity = "while"; },
+        toUntil: function(){ this.identity = "until"; },
+        toDoWhile: function(){ this.identity = "dowhile"; },
+        toDoUntil: function(){ this.identity = "dountil"; },
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<loop-node 
+                                    condition-expression="${(this.conditionExpression == undefined ? '' : this.conditionExpression)}" 
+                                    identity="${(this.identity == undefined ? '' : this.identity)}">
+                                 </loop-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>

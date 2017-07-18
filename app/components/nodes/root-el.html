@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="_styles/shared-enclosure-el-style.html">
+
+<link rel='import' href="_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="_behaviors/enclosure-el-behavior.html">
+<link rel='import' href="_behaviors/context-menu-dropzoneinside-behavior.html">
+
+<dom-module id="root-el">
+    
+    <style include="shared-enclosure-el-style"></style>
+    <style>
+        #rootDiv {
+          padding-top: 15px;
+        }
+    </style>
+
+    <template strip-whitespace>
+        <div id="rootDiv">
+          
+            <!--////////// Enclosure element ///////////-->
+            <div id="dropZone"></div>
+            <div id="enclosureDiv">
+            <content id="lightdom" select$="[[string-select]]"></content>
+            </div>
+            <!--////////////////////////////////////////-->
+          
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "root-el",
+        behaviors: [EnclosureElBehavior, DropAfterCommonBehavior, ContextMenuDropZoneInsideBehavior],
+
+        hostAttributes: {
+          'string-select': ''
+        },
+        attached: function(){
+          Polymer.dom.flush();
+          //Ceci permet de resourdre le problème avec le select du <content>. En effet,
+          //ce dernier ajoute les enfants avant de mettre le filtres en place.
+          //Cette ligne permet donc de redistribuer (re-render) les enfants, ainsi
+          //ils subiront enfin le filtrage
+          this.distributeContent();
+        }
+    });
+</script>

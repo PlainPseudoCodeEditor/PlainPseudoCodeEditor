@@ -1,0 +1,12 @@
+<script>
+  RecursiveStringifyFlatCommonBehavior = {
+    
+    //Le recursiveStringify traduit l'élément, ses attributs ET SES ENFANTS en XML.
+    //Ici, le recursiveStringify est identique au simpleStringify car cet élément n'a pas d'enfants.
+    recursiveStringify: function(){
+        let recursiveStringify = this.simpleStringify();
+        return recursiveStringify;
+    }
+    
+  }
+</script>

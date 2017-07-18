@@ -1,0 +1,36 @@
+<script>
+  ContextMenuDropZoneInsideBehavior = {
+
+    attached: function() {
+
+      let {remote} = require('electron')
+      let {Menu, MenuItem} = remote;
+
+      let menuDropZoneInside = new Menu();
+
+      let that = this;
+      menuDropZoneInside.append(new MenuItem({
+          label: 'Paste',
+          click: function(){
+            let clip = Clipboard.getInstance();
+            let content = clip.getContent();
+            //Peut être reréfléchir à un filtre plus exclusif autant pour ceci que pour le drag et drop
+            if(content != undefined){
+              that.dropInsideProcedure($(content).get( 0 ));
+            }
+            else{
+              console.log("The clipboard is empty");
+            }
+          }
+      }));
+
+      (this.$.dropZone).addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        e.cancelBubble = true;
+        e.stopPropagation();
+        menuDropZoneInside.popup(remote.getCurrentWindow());
+      }, false);
+    }
+    
+  }
+</script>

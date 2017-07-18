@@ -1,0 +1,129 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel='import' href="../../_styles/shared-input-style.html">
+<link rel='import' href="../../_styles/shared-textarea-style.html">
+<link rel='import' href="../_styles/shared-drag-effect-style.html">
+<link rel='import' href="../_styles/shared-dropzoneafter-style.html">
+<link rel='import' href="_styles/shared-subprog-arrowrect-style.html">
+
+<link rel='import' href="../_behaviors/draggable-behavior.html">
+<link rel='import' href="../_behaviors/dropafter-common-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-dropzoneafter-behavior.html">
+<link rel='import' href="../_behaviors/context-menu-wholecomponent-behavior.html">
+<link rel='import' href="../_behaviors/recursivestringify-flat-common-behavior.html">
+<link rel='import' href="../_behaviors/alldelete-common-behavior.html">
+
+<dom-module id="functcall-node">
+
+    <style include="shared-input-style"></style>
+    <style include="shared-textarea-style"></style>
+    <style include="shared-drag-effect-style"></style>
+    <style include="shared-dropzoneafter-style"></style>
+    <style include="shared-subprog-arrowrect-style"></style>
+
+    <style>
+        #curvedArrowReturn {
+            display:flex;
+            margin-right: 55%;
+            text-align: right;
+        }
+        #returnParam {
+            display: inline-flex;
+            justify-content: flex-end;
+
+            width: 100%;
+        } 
+        #buttomCurvedArrowImg {
+            flex: 1;
+            max-width: 50px;
+        }
+
+        #imgCurvedArrow {
+            height: 28px;
+        }
+
+        #returnParam div {
+            height: 100%;
+            display:flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+        }
+    </style>
+    
+    <template strip-whitespace>
+        <div id="topMostDiv">
+          <div id="surroundingDiv" on-down="handleDown" on-track="handleTrack" on-up="handleUp" class$="{{computeClass(isDragged)}}">
+            <div id="contentDiv">
+
+                <div class="straightArrowParams">
+                  <div id="topStraightArrowImg">
+                      <div><img class="imgStraightArrow" src="../../../images/nodes/StraightArrowParams_1.4.svg"/></div>
+                  </div>
+                  <div class="textListOfParams">
+                      <textarea value="{{listInputParameters::input}}" rows="1" cols="28" placeholder="List of parameters"></textarea>
+                  </div>
+                </div>
+                                    
+                <div class="centralRect">
+                  <span><input value="{{nameOfFunctCalled::input}}" placeholder="Name of the function called"></span>
+                </div>
+
+                <div id="curvedArrowReturn">
+                  <div id="returnParam">
+                      <div><textarea value="{{returnParameter::input}}" rows="1" cols="28" placeholder="Return parameter"></textarea></div>
+                  </div>
+                  <div id="buttomCurvedArrowImg">
+                      <div><img id="imgCurvedArrow" src="../../../images/nodes/CurvedArrowParams_1.3.svg"/></div>
+                  </div>
+                </div>
+
+            </div>
+          </div>
+            
+          <div id="dropZoneAfter"></div>
+        </div>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: "functcall-node",
+        behaviors: [
+          DraggableBehavior, DropAfterCommonBehavior, 
+          ContextMenuDropZoneAfterBehavior, ContextMenuWholeComponentBehavior,
+          RecursiveStringifyFlatCommonBehavior, AllDeleteCommonBehavior
+        ],
+
+        properties: {
+          listInputParameters: { type: String, reflectToAttribute: true },
+          nameOfFunctCalled: { type: String, reflectToAttribute: true },
+          returnParameter: { type: String, reflectToAttribute: true }
+        },
+
+        attached: function(){
+          //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
+          //texte que l'on tappe dedans.
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
+          let listOfTextAreas = this.querySelectorAll('textarea');
+          for(let textarea of listOfTextAreas){
+            autosizeArea(textarea);
+          }
+        },
+
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<functcall-node
+                                    list-input-parameters="${(this.listInputParameters == undefined ? '' : this.listInputParameters)}"
+                                    name-of-funct-called="${(this.nameOfFunctCalled == undefined ? '' : this.nameOfFunctCalled)}"
+                                    return-parameter="${(this.returnParameter == undefined ? '' : this.returnParameter)}">
+                                 </functcall-node>`;
+          return simpleStringify;
+        }
+
+    });
+</script>
