@@ -47,6 +47,12 @@
           expression: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.variableName != undefined){ this.variableName = he.decode(this.variableName); }
+          if(this.expression != undefined){ this.expression = he.decode(this.expression); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -59,10 +65,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<assignment-node 
-                                    variable-name="${(this.variableName == undefined ? '' : this.variableName)}" 
-                                    expression="${(this.expression == undefined ? '' : this.expression)}">
-                                 </assignment-node>`;
+          let simpleStringify = `<assignment-node variable-name="${(he.encode(this.variableName == undefined ? '' : this.variableName))}" expression="${(he.encode(this.expression == undefined ? '' : this.expression))}"></assignment-node>`;
           return simpleStringify;
         }
 

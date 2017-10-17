@@ -101,6 +101,13 @@
           returnParameter: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.listInputParameters != undefined){ this.listInputParameters = he.decode(this.listInputParameters); }
+          if(this.nameOfFunctCalled != undefined){ this.nameOfFunctCalled = he.decode(this.nameOfFunctCalled); }
+          if(this.returnParameter != undefined){ this.returnParameter = he.decode(this.returnParameter); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -117,11 +124,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<functcall-node
-                                    list-input-parameters="${(this.listInputParameters == undefined ? '' : this.listInputParameters)}"
-                                    name-of-funct-called="${(this.nameOfFunctCalled == undefined ? '' : this.nameOfFunctCalled)}"
-                                    return-parameter="${(this.returnParameter == undefined ? '' : this.returnParameter)}">
-                                 </functcall-node>`;
+          let simpleStringify = `<functcall-node list-input-parameters="${(he.encode(this.listInputParameters == undefined ? '' : this.listInputParameters))}" name-of-funct-called="${(he.encode(this.nameOfFunctCalled == undefined ? '' : this.nameOfFunctCalled))}" return-parameter="${(he.encode(this.returnParameter == undefined ? '' : this.returnParameter))}"></functcall-node>`;
           return simpleStringify;
         }
 

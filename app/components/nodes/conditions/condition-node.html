@@ -68,6 +68,11 @@
           identity: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.conditionExpression != undefined){ this.conditionExpression = he.decode(this.conditionExpression); }
+        },
+
         attached: function(){
           switch(this.identity){
             case "if":
@@ -88,8 +93,27 @@
           }
         },
         
+        lookingForElseSeparator: function(){
+          let elseSeparator = undefined;
+          for (let i=0; i<Polymer.dom(this).children.length; i++){
+            if(Polymer.dom(this).children[i].localName == "else-separator"){
+              elseSeparator = Polymer.dom(this).children[i];
+            }
+          }
+          return elseSeparator;
+        },
+
         toIf: function(){
-          let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          //BIZARRE BIZARRE le if fait sa recherche également dans ses petits-enfants et ça, ca
+          //m'arrange pas, alors je fais mon propre algorithme de fouille des enfants light-dom.
+          //Voir plus bas.
+          /*let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          if(elseSeparator != undefined){
+            Polymer.dom(this).removeChild(elseSeparator);
+          }
+          this.identity == "if";*/
+
+          let elseSeparator = this.lookingForElseSeparator();
           if(elseSeparator != undefined){
             Polymer.dom(this).removeChild(elseSeparator);
           }
@@ -97,7 +121,17 @@
         },
 
         toIfElse: function(){
-          let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          //BIZARRE BIZARRE le if fait sa recherche également dans ses petits-enfants et ça, ca
+          //m'arrange pas, alors je fais mon propre algorithme de fouille des enfants light-dom.
+          //Voir plus bas.
+          /*let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          if(elseSeparator == undefined){
+            elseSeparator = $('<else-separator></else-separator>').get( 0 );
+            Polymer.dom(this).appendChild(elseSeparator);
+          }
+          this.identity == "ifelse";*/
+
+          let elseSeparator = this.lookingForElseSeparator();
           if(elseSeparator == undefined){
             elseSeparator = $('<else-separator></else-separator>').get( 0 );
             Polymer.dom(this).appendChild(elseSeparator);
@@ -108,17 +142,22 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<condition-node 
-                                    condition-expression="${(this.conditionExpression == undefined ? '' : this.conditionExpression)}" 
-                                    identity="${(this.identity == undefined ? '' : this.identity)}">
-                                 </condition-node>`;
+          let simpleStringify = `<condition-node condition-expression="${(he.encode(this.conditionExpression == undefined ? '' : this.conditionExpression))}" identity="${(this.identity == undefined ? '' : this.identity)}"></condition-node>`;
           return simpleStringify;
         },
 
         //Pour condition-node, on doit overrider delete parce qu'on doit supprimer aussi le séparateur else si on est dans 
         //le cas d'un ifElse, sinon celui-ci se retrouvera dans le parent avec le reste du contenu de condition-node.
         delete: function(){
-          let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          //BIZARRE BIZARRE le if fait sa recherche également dans ses petits-enfants et ça, ca
+          //m'arrange pas, alors je fais mon propre algorithme de fouille des enfants light-dom.
+          //Voir plus bas.
+          /*let elseSeparator = Polymer.dom(this).querySelector("else-separator");
+          if(elseSeparator != undefined){
+            Polymer.dom(this).removeChild(elseSeparator);
+          }*/
+
+          let elseSeparator = this.lookingForElseSeparator();
           if(elseSeparator != undefined){
             Polymer.dom(this).removeChild(elseSeparator);
           }
@@ -147,7 +186,7 @@
           Polymer.dom(parent).removeChild(this);
 
           Polymer.dom.flush();
-        },
+        }
 
     });
 </script>

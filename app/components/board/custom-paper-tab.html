@@ -19,6 +19,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel='import' href="../_styles/shared-input-style.html">
 
+<!--///////////////////////////////// CUSTOM //////////////////////////////////-->
+<link rel='import' href="_behaviors/recursivestringify-flat-common-behavior.html">
+<!--///////////////////////////////////////////////////////////////////////////-->
 
 <dom-module id="custom-paper-tab">
   <template>
@@ -59,7 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       paper-ripple {
-        color: var(--custom-paper-tab-ink, --paper-yellow-a100);
+        /*////////////////////////////////// CUSTOM //////////////////////////////////*/
+        color: #00bcd4;/*var(--custom-paper-tab-ink, --paper-yellow-a100);*/
+        /*////////////////////////////////////////////////////////////////////////////*/
       }
 
       .tab-content > ::content > a {
@@ -84,7 +89,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="tab-content">
       <template is="dom-if" if="[[iseditable]]">
-        <input placeholder="Title of the page">
+        <input value="{{tabTitle::input}}" placeholder="Title of the page">
       </template>
       <template is="dom-if" if="[[!iseditable]]">
         MAIN
@@ -104,7 +109,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       behaviors: [
         Polymer.IronControlState,
         Polymer.IronButtonState,
-        Polymer.PaperRippleBehavior
+        Polymer.PaperRippleBehavior,
+        //////////////////////////////////// CUSTOM ////////////////////////////////////
+        RecursiveStringifyFlatCommonBehavior
+        ////////////////////////////////////////////////////////////////////////////////
       ],
 
       properties: {
@@ -112,7 +120,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         link: { type: Boolean, value: false, reflectToAttribute: true },
         
         //////////////////////////////////// CUSTOM ////////////////////////////////////
-        iseditable: { type: Boolean, value: false }
+        iseditable: { type: Boolean, value: false, reflectToAttribute: true },
+        tabTitle: { type: String, value: '', reflectToAttribute: true }
         ////////////////////////////////////////////////////////////////////////////////
       },
 
@@ -126,12 +135,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function(){
+        //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+        if(this.tabTitle != undefined){ this.tabTitle = he.decode(this.tabTitle); }
       },
 
       attached: function() {
         this._updateNoink();
         if(this.iseditable){
-          autosizeInput(this.$$('input'));
+          /*autosizeInput(this.$$('input'));*/
+          let listOfInputs = this.querySelectorAll('input');
+          for(let input of listOfInputs){
+            autosizeInput(input);
+          }
         }
       },
       
@@ -166,8 +181,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           anchor.click();
         }
-      }
+      },
 
+      //////////////////////////////////// CUSTOM ////////////////////////////////////
+      //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+      simpleStringify: function(){
+        let simpleStringify = `<custom-paper-tab ${(this.iseditable == true ? 'iseditable="true"' : '')} tab-title="${(he.encode(this.tabTitle == undefined ? '' : this.tabTitle))}"></custom-paper-tab>`;
+        return simpleStringify;
+      }
+      ////////////////////////////////////////////////////////////////////////////////
     });
   </script>
 </dom-module>

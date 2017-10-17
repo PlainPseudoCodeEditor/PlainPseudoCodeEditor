@@ -90,6 +90,11 @@
           menuOfTheComponent: { type: Object }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.conditionExpression != undefined){ this.conditionExpression = he.decode(this.conditionExpression); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -135,10 +140,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<loop-node 
-                                    condition-expression="${(this.conditionExpression == undefined ? '' : this.conditionExpression)}" 
-                                    identity="${(this.identity == undefined ? '' : this.identity)}">
-                                 </loop-node>`;
+          let simpleStringify = `<loop-node condition-expression="${(he.encode(this.conditionExpression == undefined ? '' : this.conditionExpression))}" identity="${(this.identity == undefined ? '' : this.identity)}"></loop-node>`;
           return simpleStringify;
         }
 

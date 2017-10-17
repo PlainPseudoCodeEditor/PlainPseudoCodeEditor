@@ -32,6 +32,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="custom-paper-tabs-icons.html">
 <link rel="import" href="custom-paper-tab.html">
 <link rel="import" href="../nodes/root-el.html">
+<!--///////////////////////////////// CUSTOM //////////////////////////////////-->
+<link rel='import' href="_behaviors/recursivestringify-incl-common-behavior.html">
+<!--///////////////////////////////////////////////////////////////////////////-->
 
 <dom-module id="custom-tabs-pages">
   <template>
@@ -85,7 +88,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       #selectionBar {
         position: absolute; height: 0; bottom: 0; left: 0; right: 0;
-        border-bottom: 2px solid var(--custom-paper-tabs-selection-bar-color, --paper-yellow-a100);
+        /*////////////////////////////////// CUSTOM //////////////////////////////////*/
+        border-bottom: 3px solid #00bcd4;/*var(--custom-paper-tabs-selection-bar-color, --paper-yellow-a100);*/
+        /*////////////////////////////////////////////////////////////////////////////*/
           -webkit-transform: scale(0); transform: scale(0);
           -webkit-transform-origin: left center; transform-origin: left center;
           transition: -webkit-transform; transition: transform;
@@ -146,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <!--Pages liées aux onglets-->
       <iron-pages selected="[[selected]]">
-        <content select="div"></content>
+        <content select="root-el"></content>
       </iron-pages>
 
       <paper-dialog id="suppressDialog" modal>
@@ -165,7 +170,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: "custom-tabs-pages",
       behaviors: [ 
         Polymer.IronResizableBehavior, 
-        Polymer.IronMenubarBehavior 
+        Polymer.IronMenubarBehavior,
+        //////////////////////////////////// CUSTOM ////////////////////////////////////
+        RecursiveStringifyInclCommonBehavior
+        ////////////////////////////////////////////////////////////////////////////////
       ],
 
       properties: {
@@ -208,8 +216,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _previousTab: { type: Object },
         
         //////////////////////////////////// CUSTOM ////////////////////////////////////
-        stringselect: { type: String, value: '' },
-        iseditable: { type: Boolean, value: false }
+        stringselect: { type: String, value: '', reflectToAttribute: true },
+        iseditable: { type: Boolean, value: false },
+        identity: { type: String, value: '', reflectToAttribute: true },
+        selected: { type: Number, value: '0', reflectToAttribute: true }
         ////////////////////////////////////////////////////////////////////////////////
         
       },
@@ -248,16 +258,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       //////////////////////////////////// CUSTOM ////////////////////////////////////
       _appendATab: function(){
-        let newPage = $(`<div><root-el string-select="${this.stringselect}"></root-el></div>`).get( 0 );
+        //get(0) transforme l'objet jquery on simple noeud html
+        let newPage = $(`<root-el string-select="${this.stringselect}"></root-el>`).get( 0 );/*`<div><root-el string-select="${this.stringselect}"></root-el></div>`*/
         //let newPage = $('<div><h1>Hello</h1></div>').get( 0 );
 
         let newTabJquery;
         if(this.iseditable){
-          newTabJquery = $(`<custom-paper-tab stringselect="${this.stringselect}" iseditable></custom-paper-tab>`);
-          //get(0) transforme l'objet jquery on simple noeud html
+          newTabJquery = $(`<custom-paper-tab iseditable></custom-paper-tab>`);
         }
         else{
-          newTabJquery = $(`<custom-paper-tab stringselect="${this.stringselect}"></custom-paper-tab>`);
+          newTabJquery = $(`<custom-paper-tab></custom-paper-tab>`);
         }
         newTabJquery.data('associatedPage', newPage);
         let newTab = newTabJquery.get( 0 );
@@ -296,10 +306,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       attached: function(){
         //Si on peut pas éditer, mettre par defaut au moins un onglet(tab)
         if(!this.iseditable){
-          let newPage = $(`<div><root-el string-select="${this.stringselect}"></root-el></div>`).get( 0 );
+          let newPage = $(`<root-el string-select="${this.stringselect}"></root-el>`).get( 0 );/*`<div><root-el string-select="${this.stringselect}"></root-el></div>`*/
           //let newPage = $('<div><h1>Hello</h1></div>').get( 0 );
 
-          let newTabJquery = $(`<custom-paper-tab stringselect="${this.stringselect}"></custom-paper-tab>`);
+          let newTabJquery = $(`<custom-paper-tab></custom-paper-tab>`);
           //get(0) transforme l'objet jquery on simple noeud html
           newTabJquery.data('associatedPage', newPage);
           let newTab = newTabJquery.get( 0 );
@@ -309,6 +319,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         this.addEventListener('askParentDeleteThisTab', this._askDeleteATab);
         this.distributeContent();
+        Polymer.dom.flush();
         //this.selected = 0;
       },
       ////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +594,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else if (cl.contains('contract')) {
           cl.remove('contract');
         }
+      },
+
+      //////////////////////////////////// CUSTOM ////////////////////////////////////
+      //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+      simpleStringify: function(){
+        let simpleStringify = `<custom-tabs-pages selected="${(this.selected == undefined ? 0 : this.selected)}" ${(this.scrollable == true ? 'scrollable="true"' : '')} identity="${(this.identity == undefined ? '' : this.identity)}" stringselect="${(this.stringselect == undefined ? '' : this.stringselect)}" ${(this.iseditable == true ? 'iseditable="true"' : '')}></custom-tabs-pages>`;
+        return simpleStringify;
       }
+      ////////////////////////////////////////////////////////////////////////////////
     });
   </script>
 </dom-module>

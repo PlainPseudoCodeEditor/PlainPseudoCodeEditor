@@ -1,0 +1,35 @@
+element document {
+  
+  element head {
+    
+    element file-format {
+      attribute version { text }
+    }
+  
+  },
+
+  element body {
+
+    #MAIN SECTION
+    element custom-tabs-pages {
+
+    },
+
+    #RECORDS SECTION
+    element custom-tabs-pages {
+
+    },
+
+    #FUNCTIONS SECTION
+    element custom-tabs-pages {
+
+    },
+
+    #PROCEDURES SECTION
+    element custom-tabs-pages {
+
+    }
+
+  }
+
+}

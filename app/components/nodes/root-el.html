@@ -5,6 +5,7 @@
 <link rel='import' href="_behaviors/dropafter-common-behavior.html">
 <link rel='import' href="_behaviors/enclosure-el-behavior.html">
 <link rel='import' href="_behaviors/context-menu-dropzoneinside-behavior.html">
+<link rel='import' href="_behaviors/recursivestringify-incl-common-behavior.html">
 
 <dom-module id="root-el">
     
@@ -33,11 +34,19 @@
 <script>
     Polymer({
         is: "root-el",
-        behaviors: [EnclosureElBehavior, DropAfterCommonBehavior, ContextMenuDropZoneInsideBehavior],
+        behaviors: [
+            DropAfterCommonBehavior, EnclosureElBehavior,
+            ContextMenuDropZoneInsideBehavior,
+            RecursiveStringifyInclCommonBehavior
+        ],
 
-        hostAttributes: {
-          'string-select': ''
+        properties: {
+          stringSelect: { type: String, reflectToAttribute: true, value: '' }
         },
+        /*hostAttributes: {
+          'string-select': ''
+        },*/
+
         attached: function(){
           Polymer.dom.flush();
           //Ceci permet de resourdre le problème avec le select du <content>. En effet,
@@ -45,6 +54,12 @@
           //Cette ligne permet donc de redistribuer (re-render) les enfants, ainsi
           //ils subiront enfin le filtrage
           this.distributeContent();
+        },
+
+        //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
+        simpleStringify: function(){
+          let simpleStringify = `<root-el string-select="${(this.stringSelect == undefined ? '' : this.stringSelect)}"></root-el>`;
+          return simpleStringify;
         }
     });
 </script>

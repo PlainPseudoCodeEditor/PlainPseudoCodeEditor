@@ -4,7 +4,7 @@
 <link rel="import" href="custom-tabs-pages.html">
 
 <dom-module id="board-el">
-    
+
     <template strip-whitespace>
 
         <paper-tabs selected="{{selected}}">
@@ -14,19 +14,11 @@
             <paper-tab>Procedures</paper-tab>
         </paper-tabs>
 
-        <iron-pages selected="{{selected}}">
-            <div>
-                <custom-tabs-pages selected="0" stringselect="assignment-node, comment-node, vardecl-node, condition-node, read-node, write-node, loop-node, functcall-node, proccall-node"></custom-tabs-pages>
-            </div>
-            <div>
-                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, recdef-node"></custom-tabs-pages>
-            </div>
-            <div>
-                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, functdecl-node"></custom-tabs-pages>
-            </div>
-            <div>
-                <custom-tabs-pages selected="0" scrollable iseditable stringselect="comment-node, procdecl-node"></custom-tabs-pages>
-            </div>
+        <iron-pages id="sections" selected="{{selected}}">
+            <custom-tabs-pages id="main" identity="main" selected="0" stringselect="assignment-node, comment-node, vardecl-node, condition-node, read-node, write-node, loop-node, functcall-node, proccall-node"></custom-tabs-pages>
+            <custom-tabs-pages id="records" identity="records" selected="0" scrollable iseditable stringselect="comment-node, recdef-node"></custom-tabs-pages>
+            <custom-tabs-pages id="functions" identity="functions" selected="0" scrollable iseditable stringselect="comment-node, functdecl-node"></custom-tabs-pages>
+            <custom-tabs-pages id="procedures" identity="procedures" selected="0" scrollable iseditable stringselect="comment-node, procdecl-node"></custom-tabs-pages>
         </iron-pages>
 
         <!--<div id="rootDiv">
@@ -55,6 +47,68 @@
                 notify: true,
                 reflectToAttribute: true
             }
+        },
+
+        stringifyCurrentStateToXml: function(){
+            let recursiveMainPageStringify = main.recursiveStringify();
+            let recursiveRecordsPageStringify = records.recursiveStringify();
+            let recursiveFunctionsPageStringify = functions.recursiveStringify();
+            let recursiveProceduresPageStringify = procedures.recursiveStringify();
+            //Lorsque l'on charge des données les ID risquent de ne plus être accessible car ils seront enfants du lightDom de iron-pages.
+            //Polymer est plutôt mal foutu de ce côté là.
+            /*let recursiveMainPageStringify = Polymer.dom(this.$.sections).children[0].recursiveStringify();
+            let recursiveRecordsPageStringify = Polymer.dom(this.$.sections).children[1].recursiveStringify();
+            let recursiveFunctionsPageStringify = Polymer.dom(this.$.sections).children[2].recursiveStringify();
+            let recursiveProceduresPageStringify = Polymer.dom(this.$.sections).children[3].recursiveStringify();*/
+
+            let documentStringify = `<?xml version="1.0"?><document><head><file-format version="0.1"></file-format></head><body></body></document>`;
+            n = documentStringify.lastIndexOf("</body>");
+            let recursiveDocumentStringify = documentStringify.substring(0,n)+  recursiveMainPageStringify + recursiveRecordsPageStringify + recursiveFunctionsPageStringify + recursiveProceduresPageStringify  +documentStringify.substring(n);
+
+            return recursiveDocumentStringify;
+        },
+
+        loadTheNewState: function(mainSection, recordSection, functionSection, procedureSection){
+
+            //Vider les enfants de la section Main
+            while(Polymer.dom(this.$.main).children.length > 0){
+                Polymer.dom(this.$.main).removeChild(Polymer.dom(this.$.main).firstChild);
+            }
+            //Reremplir la section Main avec les données du fichier
+            for (let i=0; i<mainSection.children.length; i++){
+                Polymer.dom(this.$.main).appendChild($(mainSection.children[i].outerHTML).get(0));
+            }
+
+            //Vider les enfants de la section Record
+            while(Polymer.dom(this.$.records).children.length > 0){
+                Polymer.dom(this.$.records).removeChild(Polymer.dom(this.$.records).firstChild);
+            }
+            //Reremplir la section Record avec les données du fichier
+            for (let i=0; i<recordSection.children.length; i++){
+                Polymer.dom(this.$.records).appendChild($(recordSection.children[i].outerHTML).get(0));
+            }
+
+            //Vider les enfants de la section Function
+            while(Polymer.dom(this.$.functions).children.length > 0){
+                Polymer.dom(this.$.functions).removeChild(Polymer.dom(this.$.functions).firstChild);
+            }
+            //Reremplir la section Function avec les données du fichier
+            for (let i=0; i<functionSection.children.length; i++){
+                Polymer.dom(this.$.functions).appendChild($(functionSection.children[i].outerHTML).get(0));
+            }
+
+            //Vider les enfants de la section Procedure
+            while(Polymer.dom(this.$.procedures).children.length > 0){
+                Polymer.dom(this.$.procedures).removeChild(Polymer.dom(this.$.procedures).firstChild);
+            }
+            //Reremplir la section Procedure avec les données du fichier
+            for (let i=0; i<procedureSection.children.length; i++){
+                Polymer.dom(this.$.procedures).appendChild($(procedureSection.children[i].outerHTML).get(0));
+            }
+
+            Polymer.dom.flush();
+
+            selected = 0;
         }
     });
 </script>

@@ -80,6 +80,14 @@
           dataReturned: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.inputParameters != undefined){ this.inputParameters = he.decode(this.inputParameters); }
+          if(this.functHeader != undefined){ this.functHeader = he.decode(this.functHeader); }
+          if(this.functName != undefined){ this.functName = he.decode(this.functName); }
+          if(this.dataReturned != undefined){ this.dataReturned = he.decode(this.dataReturned); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -96,12 +104,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<functdecl-node 
-                                    input-parameters="${(this.inputParameters == undefined ? '' : this.inputParameters)}"
-                                    funct-header="${(this.functHeader == undefined ? '' : this.functHeader)}"
-                                    funct-name="${(this.functName == undefined ? '' : this.functName)}"
-                                    data-returned="${(this.dataReturned == undefined ? '' : this.dataReturned)}">
-                                 </functdecl-node>`;
+          let simpleStringify = `<functdecl-node input-parameters="${(he.encode(this.inputParameters == undefined ? '' : this.inputParameters))}" funct-header="${(he.encode(this.functHeader == undefined ? '' : this.functHeader))}" funct-name="${(he.encode(this.functName == undefined ? '' : this.functName))}" data-returned="${(he.encode(this.dataReturned == undefined ? '' : this.dataReturned))}"></functdecl-node>`;
           return simpleStringify;
         }
 

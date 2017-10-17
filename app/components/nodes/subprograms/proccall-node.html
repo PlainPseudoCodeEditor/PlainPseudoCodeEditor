@@ -83,6 +83,13 @@
           listOutputParameters: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.listInputParameters != undefined){ this.listInputParameters = he.decode(this.listInputParameters); }
+          if(this.nameOfProcedCalled != undefined){ this.nameOfProcedCalled = he.decode(this.nameOfProcedCalled); }
+          if(this.listOutputParameters != undefined){ this.listOutputParameters = he.decode(this.listOutputParameters); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -99,11 +106,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<proccall-node
-                                    list-input-parameters="${(this.listInputParameters == undefined ? '' : this.listInputParameters)}"
-                                    name-of-proced-called="${(this.nameOfProcedCalled == undefined ? '' : this.nameOfProcedCalled)}"
-                                    list-output-parameters="${(this.listOutputParameters == undefined ? '' : this.listOutputParameters)}">
-                                 </proccall-node>`;
+          let simpleStringify = `<proccall-node list-input-parameters="${(he.encode(this.listInputParameters == undefined ? '' : this.listInputParameters))}" name-of-proced-called="${(he.encode(this.nameOfProcedCalled == undefined ? '' : this.nameOfProcedCalled))}" list-output-parameters="${(he.encode(this.listOutputParameters == undefined ? '' : this.listOutputParameters))}"></proccall-node>`;
           return simpleStringify;
         }
 

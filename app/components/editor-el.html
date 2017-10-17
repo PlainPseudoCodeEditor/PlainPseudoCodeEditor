@@ -2,9 +2,15 @@
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <!--L'icone image:view-compact se trouve dans la bibliothèque d'icone "image", je dois l'importer en supplément-->
 <link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<!--L'icone editor:insert-drive-file se trouve dans la bibliothèque d'icone "editor", je dois l'importer en supplément-->
+<link rel="import" href="../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<script src="../bower_components/es6-relax-ng/demo/js/traceur-runtime.js"></script>
+
 <link rel="import" href="nodes/nodesloader.html">
 <link rel="import" href="catalogbar/catalogbar-el.html">
 <link rel="import" href="board/board-el.html">
@@ -15,9 +21,9 @@
 
       <style>
         app-header {
-          background-color: #4285f4; color: #fff;
+          background-color: hsl(217,89%,61%);/*#4285f4;*/ color: hsl(0, 0%, 100%); /*#fff;*/
         }
-        app-header paper-icon-button { --paper-icon-button-ink-color: #fff; }
+        app-header paper-icon-button { --paper-icon-button-ink-color: hsl(0, 0%, 100%); /*#fff;*/ }
         
         app-drawer-layout {
           --app-drawer-layout-content-transition: margin 0.2s;
@@ -25,7 +31,7 @@
         }
         app-drawer {
           --app-drawer-content-container: {
-            background-color: #eee;
+            background-color: hsl(217,72%,75%); /*#4285f4;*/ /*#eee;*/
           }
           --app-drawer-width: 170px;
         }
@@ -34,19 +40,29 @@
           margin-top: 100px; height: calc(100% - 80px);
           overflow: auto;
         }
-        #sidebar {
+
+        #centralArea {
           display:flex;
         }
-        #catbarDiv {
-          display: inline-flex;
-        }
         #sidemarkDiv {
+          display: inline-flex;
+          margin-left: -16px;
+          background-color: hsl(217, 72%, 75%); /*#4285f4;*/
+        }
+        #boardDiv {
           flex: 1;
         }
 
         #boardDiv {
-          background-color: #ffffff;
+          background-color: hsl(0, 0%, 100%); /*#ffffff;*/
           padding: 8px;
+        }
+
+        .menuOption {
+          margin-right: 5px;
+          padding-right: 10px;
+          background-color: hsla(0,100%,100%,0.2);
+          cursor: pointer;
         }
       </style>
 
@@ -55,8 +71,10 @@
 
         <app-header fixed effects="waterfall" slot="header">
           <app-toolbar>
-            
-            <div main-title>Inbox</div>
+            <span id="loadIconDiv" class="menuOption"><paper-icon-button id="loadIcon" icon="icons:folder"></paper-icon-button> Load</span>
+            <span id="saveIconDiv" class="menuOption"><paper-icon-button id="saveIcon" icon="icons:save"></paper-icon-button> Save</span>
+            <span id="pdfIconDiv" class="menuOption"><paper-icon-button id="pdfIcon" icon="editor:insert-drive-file"></paper-icon-button> Export as pdf</span>
+            <span id="printIconDiv" class="menuOption"><paper-icon-button id="printIcon" icon="icons:print"></paper-icon-button> Print</span>
           </app-toolbar>
         </app-header>
 
@@ -64,14 +82,15 @@
 
           <app-drawer slot="drawer">
             <div class="drawer-content">
-              <div id="sidebar">
-                <div id="catbarDiv"><catalogbar-el selected="{{selected}}"></catalogbar-el></div>
-                <div id="sidemarkDiv"><paper-icon-button id="toggle" icon="image:view-compact"></paper-icon-button></div>
-              </div>
+              <catalogbar-el selected="{{selected}}"></catalogbar-el>
             </div>
           </app-drawer>
+
+          <div id="centralArea">
+            <div id="sidemarkDiv"><paper-icon-button id="sideMarkIcon" icon="image:view-compact"></paper-icon-button></div>
             
-          <div id="boardDiv"><board-el selected="{{selected}}"></board-el></div>
+            <div id="boardDiv"><board-el id="board" selected="{{selected}}"></board-el></div>
+          </div>
 
         </app-drawer-layout>
 
@@ -95,6 +114,16 @@
         </div>
       </paper-dialog>
 
+      <paper-toast id="saveToast" text="Saved in [[addressCurrentDoc]]"></paper-toast>
+
+      <paper-dialog id="failedRelaxNGValidationDialog" modal>
+        <h2>Attention !</h2>
+        <p>Le fichier que vous essayez de charger ne semble pas correspondre au format voulu par l'application</p>
+        <div class="buttons">
+          <paper-button dialog-dismiss autofocus>Compris</paper-button>
+        </div>
+      </paper-dialog>
+
     </template>
 
 </dom-module>
@@ -109,6 +138,9 @@
             value: 0,
             notify: true,
             reflectToAttribute: true
+          },
+          addressCurrentDoc: {
+            type: String
           }
         },
 
@@ -118,14 +150,87 @@
         },
 
         attached: function(){
+          let that = this;
+
+          loadIconDiv.addEventListener('click', function(){
+
+            const dialog = require('electron').remote.dialog;
+            dialog.showOpenDialog(
+              {
+                filters: [
+                    {name: 'XML File', extensions: ['xml']}
+                ],
+                properties: ['openFile']
+              }, 
+              function(files){
+                try {
+                  that.openAFile(that, files[0]);
+                    /*var fs = require('fs');
+                    fs.readFile(files[0], 'utf-8', (err, data)=>{
+                      let parser = new DOMParser();
+                      let xmlDoc = parser.parseFromString(data,"text/xml");
+
+                      let fileFormat = xmlDoc.getElementsByTagName("file-format")[0];
+                      if(fileFormat == undefined){  }//throw exception
+
+                      
+                    })*/
+                    
+                } catch(err) {
+
+                }
+              }
+            );
+
+          });
+
+          saveIconDiv.addEventListener('click', function(){
+            if(that.addressCurrentDoc == undefined){
+              try {
+                  const dialog = require('electron').remote.dialog;
+                  dialog.showSaveDialog(
+                    {
+                      filters: [
+                        {name: 'XML File', extensions: ['xml']}
+                      ]
+                    },
+                    (fileFullPath)=>{
+                      that.addressCurrentDoc = fileFullPath;
+                      that.saveAFile(that, that.addressCurrentDoc);
+                    }
+                  )
+              } catch(err) {
+
+              }
+            }
+            else {
+              try {
+                  that.saveAFile(that, that.addressCurrentDoc);
+              } catch(err) {
+                   
+              }
+            }
+            
+          });
+
+          pdfIconDiv.addEventListener('click', function(){
+
+          });
+
+          printIconDiv.addEventListener('click', function(){
+
+          });
+
+
           let drawerLayout = document.getElementById('drawerLayout');
-          toggle.addEventListener('click', function() {
+          sideMarkIcon.addEventListener('click', function() {
             if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
               drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
             } else {
               drawerLayout.drawer.toggle();
             }
           });
+
           this.addEventListener('askDeleteThisNode', this._askDeleteANode);
           this.addEventListener('askDeleteRecursiveThisNode', this._askRecursiveDeleteANode);
         },
@@ -148,5 +253,107 @@
           let nodeToRecursiveDelete = $(event.srcElement).data('targetNodeToRecursiveDelete');
           nodeToRecursiveDelete.recursiveDelete();
         },
+
+
+        saveAFile: function(that, fileFullPath){
+          const fs = require('fs');
+          var content = board.stringifyCurrentStateToXml();
+          console.log(content);
+          fs.writeFile(fileFullPath, content, function(err){
+
+          });
+          that.$.saveToast.open();
+        },
+
+        openAFile: function(that, fileFullPath){
+
+          require("amd-loader");
+
+          const sch = require('../bower_components/es6-relax-ng/demo/dist/class/ng-schema');
+          const patt = require('../bower_components/es6-relax-ng/demo/dist/class/ng-pattern');
+          const core = require('../bower_components/es6-relax-ng/demo/dist/core');
+          const col = require('../bower_components/es6-relax-ng/demo/dist/class/ng-collection');
+          const dom = require('../bower_components/es6-relax-ng/demo/dist/class/ng-dom');
+
+            core.getXML('./relax-ng-schemas/schema_003.rng').then(function (xml) {
+
+              try {
+                var schema = new sch.NgSchema(xml);
+                schema.simplify();
+                var pattern = new patt.NgPattern(schema);
+                var collection = new col.NgCollection(pattern);
+
+                core.getXML(fileFullPath).then(function (xmlfile) {//'./relax-ng-schemas/testOutput.xml'
+
+                  try {
+                    collection.collect(new dom.NgDOM(xmlfile));
+                  } catch (e) {
+                    console.log('collection error', e);
+                    that.openAFileFailure(that);
+                  }
+
+                  var collected = [];
+
+                  collection.collection.forEach(function(item) {
+                      collected.push({
+                          className: item.className,
+                          errorClassName: item.errorClassName,
+                          message: item.message
+                      });
+                  });
+
+                  console.log(collected);
+                  if(collected.length != 0){
+                    //The file failed at validation
+                    that.openAFileFailure(that);
+                  }
+                  else {
+                    that.openAFileSuccess(that, fileFullPath);
+                  }
+                }, function(xhr) {
+                  console.log('error', xhr);
+                  that.openAFileFailure(that);
+                });
+
+              } catch (e) {
+                console.log(e);
+                that.openAFileFailure(that);
+              }
+              
+            }, function(xhr) {
+              console.log('error', xhr);
+              that.openAFileFailure(that);
+            });
+
+        },
+
+        openAFileSuccess: function(that, fileFullPath){
+          that.addressCurrentDoc = fileFullPath;
+
+          //Charger en mémoire ICI
+          var fs = require('fs');
+          fs.readFile(fileFullPath, 'utf-8', (err, data)=>{
+            let parser = new DOMParser();
+            let xmlDoc = parser.parseFromString(data,"text/xml");
+
+            /*let mainSection = $(xmlDoc.getElementsByTagName("custom-tabs-pages")[0].outerHTML).get( 0 );
+            let recordSection = $(xmlDoc.getElementsByTagName("custom-tabs-pages")[1].outerHTML).get( 0 );
+            let functionSection = $(xmlDoc.getElementsByTagName("custom-tabs-pages")[2].outerHTML).get( 0 );
+            let procedureSection = $(xmlDoc.getElementsByTagName("custom-tabs-pages")[3].outerHTML).get( 0 );*/
+
+            let mainSection = xmlDoc.getElementsByTagName("custom-tabs-pages")[0];
+            let recordSection = xmlDoc.getElementsByTagName("custom-tabs-pages")[1];
+            let functionSection = xmlDoc.getElementsByTagName("custom-tabs-pages")[2];
+            let procedureSection = xmlDoc.getElementsByTagName("custom-tabs-pages")[3];
+
+
+            that.$.board.loadTheNewState(mainSection, recordSection, functionSection, procedureSection);
+          });
+        },
+        openAFileFailure: function(that){
+          //Si on arrive ici, c'est que la validation à échouée
+          (that.$.failedRelaxNGValidationDialog).open();
+        }
+
     });
 </script>

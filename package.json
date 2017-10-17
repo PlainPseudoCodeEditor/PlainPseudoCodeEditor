@@ -45,7 +45,9 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
+    "amd-loader": "0.0.8",
     "autosize": "^3.0.21",
-    "autosize-input": "^0.4.0"
+    "autosize-input": "^0.4.0",
+    "he": "^1.1.1"
   }
 }

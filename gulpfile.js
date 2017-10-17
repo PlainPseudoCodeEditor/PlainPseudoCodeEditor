@@ -152,8 +152,11 @@ gulp.task('copy', function() {
     ])
     .pipe(gulp.dest(dist('elements')));
 
-  var additionalscripts = gulp.src(['app/additionalscripts/**/*.js'])
+  var addscript = gulp.src(['app/additionalscripts/**/*.js'])
     .pipe(gulp.dest(dist('additionalscripts')));
+
+  var relaxngschem = gulp.src(['app/relax-ng-schemas/**/*'])
+    .pipe(gulp.dest(dist('relax-ng-schemas')));
 
   var swBootstrap = gulp.src(['bower_components/platinum-sw/bootstrap/*.js'])
     .pipe(gulp.dest(dist('elements/bootstrap')));
@@ -165,7 +168,7 @@ gulp.task('copy', function() {
     .pipe($.rename('elements.vulcanized.html'))
     .pipe(gulp.dest(dist('elements')));
 
-  return merge(app, bower, elements, additionalscripts, vulcanized, swBootstrap, swToolbox)
+  return merge(app, bower, elements, addscript, relaxngschem, vulcanized, swBootstrap, swToolbox)
     .pipe($.size({
       title: 'copy'
     }));

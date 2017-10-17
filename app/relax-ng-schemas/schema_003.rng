@@ -1,0 +1,470 @@
+<rng:grammar xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" ns="" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+	<rng:start>
+		<rng:ref name="document"/>
+	</rng:start>
+    <rng:define name="document">
+		<rng:element name="document">
+            <rng:group>
+                <rng:element name="head">
+                    <rng:group>
+                        <rng:element name="file-format">
+                            <rng:attribute name="version">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                        </rng:element>
+                    </rng:group>
+                </rng:element>
+                <rng:element name="body">
+                    <rng:group>
+                        <rng:element name="custom-tabs-pages">
+                            <rng:group>
+                                <rng:element name="custom-paper-tab">
+                                    <rng:attribute name="tab-title">
+                                        <rng:data type="string"/>
+                                    </rng:attribute>
+                                </rng:element>
+                                <rng:element name="root-el">
+                                    <rng:interleave>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="comment-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="assignment-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="vardecl-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="read-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="write-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="condition-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="loop-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="functcall-node"/>
+                                        </rng:zeroOrMore>
+                                        <rng:zeroOrMore>
+                                            <rng:ref name="proccall-node"/>
+                                        </rng:zeroOrMore>
+                                    </rng:interleave>
+                                    <rng:attribute name="string-select">
+                                        <rng:data type="string"/>
+                                    </rng:attribute>
+                                </rng:element>
+                            </rng:group>
+                            <rng:attribute name="selected">
+                                <rng:data type="integer"/>
+                            </rng:attribute>
+                            <rng:attribute name="identity">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="stringselect">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                        </rng:element>
+                        <rng:element name="custom-tabs-pages">
+                            <rng:group>
+                                <rng:zeroOrMore>
+                                    <rng:element name="custom-paper-tab">
+                                        <rng:attribute name="iseditable">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                        <rng:attribute name="tab-title">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                    <rng:element name="root-el">
+                                        <rng:interleave>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="comment-node"/>
+                                            </rng:zeroOrMore>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="recdef-node"/>
+                                            </rng:zeroOrMore>
+                                        </rng:interleave>
+                                        <rng:attribute name="string-select">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                </rng:zeroOrMore>
+                            </rng:group>
+                            <rng:attribute name="selected">
+                                <rng:data type="integer"/>
+                            </rng:attribute>
+                            <rng:attribute name="scrollable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="identity">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="stringselect">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="iseditable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                        </rng:element>
+                        <rng:element name="custom-tabs-pages">
+                            <rng:group>
+                                <rng:zeroOrMore>
+                                    <rng:element name="custom-paper-tab">
+                                        <rng:attribute name="iseditable">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                        <rng:attribute name="tab-title">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                    <rng:element name="root-el">
+                                        <rng:interleave>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="comment-node"/>
+                                            </rng:zeroOrMore>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="functdecl-node"/>
+                                            </rng:zeroOrMore>
+                                        </rng:interleave>
+                                        <rng:attribute name="string-select">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                </rng:zeroOrMore>
+                            </rng:group>
+                            <rng:attribute name="selected">
+                                <rng:data type="integer"/>
+                            </rng:attribute>
+                            <rng:attribute name="scrollable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="identity">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="stringselect">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="iseditable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                        </rng:element>
+                        <rng:element name="custom-tabs-pages">
+                            <rng:group>
+                                <rng:zeroOrMore>
+                                    <rng:element name="custom-paper-tab">
+                                        <rng:attribute name="iseditable">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                        <rng:attribute name="tab-title">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                    <rng:element name="root-el">
+                                        <rng:interleave>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="comment-node"/>
+                                            </rng:zeroOrMore>
+                                            <rng:zeroOrMore>
+                                                <rng:ref name="procdecl-node"/>
+                                            </rng:zeroOrMore>
+                                        </rng:interleave>
+                                        <rng:attribute name="string-select">
+                                            <rng:data type="string"/>
+                                        </rng:attribute>
+                                    </rng:element>
+                                </rng:zeroOrMore>
+                            </rng:group>
+                            <rng:attribute name="selected">
+                                <rng:data type="integer"/>
+                            </rng:attribute>
+                            <rng:attribute name="scrollable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="identity">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="stringselect">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                            <rng:attribute name="iseditable">
+                                <rng:data type="string"/>
+                            </rng:attribute>
+                        </rng:element>
+                    </rng:group>
+                </rng:element>
+            </rng:group>
+        </rng:element>
+	</rng:define>
+    <rng:define name="comment-node">
+        <rng:element name="comment-node">
+            <rng:attribute name="content-text">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="assignment-node">
+        <rng:element name="assignment-node">
+            <rng:attribute name="variable-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="expression">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="vardecl-node">
+        <rng:element name="vardecl-node">
+            <rng:attribute name="variable-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="variable-type">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="identity">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="read-node">
+        <rng:element name="read-node">
+            <rng:attribute name="variable-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="write-node">
+        <rng:element name="write-node">
+            <rng:attribute name="expression">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="functcall-node">
+        <rng:element name="functcall-node">
+            <rng:attribute name="list-input-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="name-of-funct-called">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="return-parameter">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="proccall-node">
+        <rng:element name="proccall-node">
+            <rng:attribute name="list-input-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="name-of-proced-called">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="list-output-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="else-separator">
+        <rng:element name="else-separator">
+            <rng:group>
+                <rng:optional>
+                    <rng:text/>
+                </rng:optional>
+            </rng:group>
+        </rng:element>
+	</rng:define>
+    <rng:define name="condition-node">
+        <rng:element name="condition-node">
+            <rng:interleave>
+                <rng:zeroOrMore>
+                    <rng:ref name="else-separator"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="comment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="assignment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="vardecl-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="read-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="write-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="condition-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="loop-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="functcall-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="proccall-node"/>
+                </rng:zeroOrMore>
+            </rng:interleave>
+            <rng:attribute name="condition-expression">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="identity">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="loop-node">
+        <rng:element name="loop-node">
+            <rng:interleave>
+                <rng:zeroOrMore>
+                    <rng:ref name="comment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="assignment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="vardecl-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="read-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="write-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="condition-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="loop-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="functcall-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="proccall-node"/>
+                </rng:zeroOrMore>
+            </rng:interleave>
+            <rng:attribute name="condition-expression">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="identity">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="recdef-node">
+        <rng:element name="recdef-node">
+            <rng:interleave>
+                <rng:zeroOrMore>
+                    <rng:ref name="comment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="vardecl-node"/>
+                </rng:zeroOrMore>
+            </rng:interleave>
+            <rng:attribute name="record-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="functdecl-node">
+        <rng:element name="functdecl-node">
+            <rng:interleave>
+                <rng:zeroOrMore>
+                    <rng:ref name="comment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="assignment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="vardecl-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="read-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="write-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="condition-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="loop-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="functcall-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="proccall-node"/>
+                </rng:zeroOrMore>
+            </rng:interleave>
+            <rng:attribute name="input-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="funct-header">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="funct-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="data-returned">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+    <rng:define name="procdecl-node">
+        <rng:element name="procdecl-node">
+            <rng:interleave>
+                <rng:zeroOrMore>
+                    <rng:ref name="comment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="assignment-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="vardecl-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="read-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="write-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="condition-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="loop-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="functcall-node"/>
+                </rng:zeroOrMore>
+                <rng:zeroOrMore>
+                    <rng:ref name="proccall-node"/>
+                </rng:zeroOrMore>
+            </rng:interleave>
+            <rng:attribute name="input-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="input-output-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="output-parameters">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="proced-header">
+                <rng:data type="string"/>
+            </rng:attribute>
+            <rng:attribute name="proced-name">
+                <rng:data type="string"/>
+            </rng:attribute>
+        </rng:element>
+	</rng:define>
+</rng:grammar>

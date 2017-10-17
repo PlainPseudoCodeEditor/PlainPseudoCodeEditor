@@ -87,6 +87,15 @@
           procedName: { type: String, reflectToAttribute: true }
         },
 
+        ready: function(){
+          //Decodage des propiétés correspondantes aux champs input encodées pour protéger le XML
+          if(this.inputParameters != undefined){ this.inputParameters = he.decode(this.inputParameters); }
+          if(this.inputOutputParameters != undefined){ this.inputOutputParameters = he.decode(this.inputOutputParameters); }
+          if(this.outputParameters != undefined){ this.outputParameters = he.decode(this.outputParameters); }
+          if(this.procedHeader != undefined){ this.procedHeader = he.decode(this.procedHeader); }
+          if(this.procedName != undefined){ this.procedName = he.decode(this.procedName); }
+        },
+
         attached: function(){
           //Ceci permet de faire en sorte que tout les inputs texte se resizent en fonction du 
           //texte que l'on tappe dedans.
@@ -103,13 +112,7 @@
 
         //Le simpleStringify traduit uniquement l'élément avec ses attributs en XML, PAS SES ENFANTS.
         simpleStringify: function(){
-          let simpleStringify = `<procdecl-node 
-                                    input-parameters="${(this.inputParameters == undefined ? '' : this.inputParameters)}"
-                                    input-output-parameters="${(this.inputOutputParameters == undefined ? '' : this.inputOutputParameters)}"
-                                    output-parameters="${(this.outputParameters == undefined ? '' : this.outputParameters)}"
-                                    proced-header="${(this.procedHeader == undefined ? '' : this.procedHeader)}"
-                                    proced-name="${(this.procedName == undefined ? '' : this.procedName)}">
-                                 </procdecl-node>`;
+          let simpleStringify = `<procdecl-node input-parameters="${(he.encode(this.inputParameters == undefined ? '' : this.inputParameters))}" input-output-parameters="${(he.encode(this.inputOutputParameters == undefined ? '' : this.inputOutputParameters))}" output-parameters="${(he.encode(this.outputParameters == undefined ? '' : this.outputParameters))}" proced-header="${(he.encode(this.procedHeader == undefined ? '' : this.procedHeader))}" proced-name="${(he.encode(this.procedName == undefined ? '' : this.procedName))}"></procdecl-node>`;
           return simpleStringify;
         }
 
